@@ -22,9 +22,9 @@ class PlayerCharacterControl : KeyCodeHolder
         FunctionName = "ControlManager"; //ゲーム内でユニークなキーコントロール単位名
         priority = 0; //同じキー名がkeyInputに登録されるとこの値が大きいほうが優先される。
         keyInput = GameObject.Find("Base").GetComponent<KeyInput>(); //KeyInputがAddComponentされてるObjectからKeyInputを取得
+        GetDefaultInput();
         keyInput.AddKeyCodeActions(this); //ゲームコントロール単位をkeyInputに登録
         keyInput.ActiveKeyCodeActionHolder(FunctionName); //キーコントロール名単位のキー入力を有効にします。(競合している場合はpriorityが高いほうが優先されます。)
-        GetDefaultInput();
     }
     
     private void GetDefaultInput()
