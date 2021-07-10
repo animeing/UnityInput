@@ -5,17 +5,17 @@ using UnityEngine;
 
 public class KeyInput : MonoBehaviour
 {
-    public Dictionary<string, KeyCodeHolder> keyCodeActions
+    public Dictionary<string, KeyCodeHolder> KeyCodeActions
     {
         get;
         private set;
     } = new Dictionary<string, KeyCodeHolder>();
-    public ConcurrentDictionary<string, KeyCodeActionDto> currentKeyCodeAction
+    public ConcurrentDictionary<string, KeyCodeActionDto> CurrentKeyCodeAction
     {
         get;
         private set;
     } = new ConcurrentDictionary<string, KeyCodeActionDto>();
-    public Dictionary<string, List<KeyCodeActionDto>> keyCodeHistory
+    public Dictionary<string, List<KeyCodeActionDto>> KeyCodeHistory
     {
         get;
         private set;
@@ -23,7 +23,7 @@ public class KeyInput : MonoBehaviour
 
     void Update()
     {
-        foreach(KeyCodeActionDto keyCodeAction in currentKeyCodeAction.Values)
+        foreach(KeyCodeActionDto keyCodeAction in CurrentKeyCodeAction.Values)
         {
             if(keyCodeAction == null)
             {
@@ -34,60 +34,60 @@ public class KeyInput : MonoBehaviour
     }
     public bool AddKeyCodeActions(KeyCodeHolder keyCodeHolder)
     {
-        if (keyCodeActions.ContainsKey(keyCodeHolder.FunctionName))
+        if (KeyCodeActions.ContainsKey(keyCodeHolder.FunctionName))
         {
             return false;
         }
-        keyCodeActions.Add(keyCodeHolder.FunctionName, keyCodeHolder);
+        KeyCodeActions.Add(keyCodeHolder.FunctionName, keyCodeHolder);
         return true;
     }
 
     public void RemoveKeyCodeActions(KeyCodeHolder keyCodeHolder)
     {
-        if(keyCodeActions.ContainsKey(keyCodeHolder.FunctionName))
+        if(KeyCodeActions.ContainsKey(keyCodeHolder.FunctionName))
         {
-            keyCodeActions.Remove(keyCodeHolder.FunctionName);
+            KeyCodeActions.Remove(keyCodeHolder.FunctionName);
         }
         foreach(string keyCode in keyCodeHolder.KeyCodeActions.Keys)
         {
-            if (keyCodeHistory.ContainsKey(keyCode))
+            if (KeyCodeHistory.ContainsKey(keyCode))
             {
-                keyCodeHistory[keyCode].Remove(keyCodeHolder.KeyCodeActions[keyCode]);
+                KeyCodeHistory[keyCode].Remove(keyCodeHolder.KeyCodeActions[keyCode]);
             }
 
         }
     }
     public void ActiveKeyCodeActionHolder(string functionName)
     {
-        foreach(KeyCodeActionDto keyCodeAction in keyCodeActions[functionName].KeyCodeActions.Values)
+        foreach(KeyCodeActionDto keyCodeAction in KeyCodeActions[functionName].KeyCodeActions.Values)
         {
-            if(!currentKeyCodeAction.ContainsKey(keyCodeAction.KeyCode))
+            if(!CurrentKeyCodeAction.ContainsKey(keyCodeAction.KeyCode))
             {
-                currentKeyCodeAction.TryAdd(keyCodeAction.KeyCode, keyCodeAction);
+                CurrentKeyCodeAction.TryAdd(keyCodeAction.KeyCode, keyCodeAction);
                 AddKeyCodeHistory(keyCodeAction);
                 continue;
             }
-            if(currentKeyCodeAction[keyCodeAction.KeyCode].Priority < keyCodeAction.Priority)
+            if(CurrentKeyCodeAction[keyCodeAction.KeyCode].Priority < keyCodeAction.Priority)
             {
-                currentKeyCodeAction[keyCodeAction.KeyCode].DisableAction();
-                currentKeyCodeAction[keyCodeAction.KeyCode] = keyCodeAction;
+                CurrentKeyCodeAction[keyCodeAction.KeyCode].DisableAction();
+                CurrentKeyCodeAction[keyCodeAction.KeyCode] = keyCodeAction;
                 AddKeyCodeHistory(keyCodeAction);
             }
         }
     }
     private void AddKeyCodeHistory(KeyCodeActionDto keyCodeAction)
     {
-        if(!keyCodeHistory.ContainsKey(keyCodeAction.KeyCode))
+        if(!KeyCodeHistory.ContainsKey(keyCodeAction.KeyCode))
         {
-            keyCodeHistory.Add(keyCodeAction.KeyCode, new List<KeyCodeActionDto>());
+            KeyCodeHistory.Add(keyCodeAction.KeyCode, new List<KeyCodeActionDto>());
         }
-        keyCodeHistory[keyCodeAction.KeyCode].Add(keyCodeAction);
+        KeyCodeHistory[keyCodeAction.KeyCode].Add(keyCodeAction);
     }
 
     public void BackHistory()
     {
         int maxPriority = GetCurrentMaxPriority();
-        foreach(KeyCodeActionDto keyCodeAction in new List<KeyCodeActionDto>(currentKeyCodeAction.Values))
+        foreach(KeyCodeActionDto keyCodeAction in new List<KeyCodeActionDto>(CurrentKeyCodeAction.Values))
         {
             if(keyCodeAction.Priority == maxPriority)
             {
@@ -95,21 +95,21 @@ public class KeyInput : MonoBehaviour
                 if(TryGetHistory(keyCodeAction.KeyCode, ref codeAction))
                 {
                     keyCodeAction.DisableAction();
-                    if (currentKeyCodeAction.ContainsKey(keyCodeAction.KeyCode))
+                    if (CurrentKeyCodeAction.ContainsKey(keyCodeAction.KeyCode))
                     {
-                        currentKeyCodeAction[keyCodeAction.KeyCode] = codeAction;
+                        CurrentKeyCodeAction[keyCodeAction.KeyCode] = codeAction;
                         Debug.Log(keyCodeAction.KeyCodeName);
                     }
                     else
                     {
-                        currentKeyCodeAction.TryAdd(keyCodeAction.KeyCode, codeAction);
+                        CurrentKeyCodeAction.TryAdd(keyCodeAction.KeyCode, codeAction);
                     }
                 }
                 else
                 {
                     KeyCodeActionDto re;
-                    currentKeyCodeAction.TryRemove(keyCodeAction.KeyCode, out re);
-                    re.DisableAction();
+                    if(CurrentKeyCodeAction.TryRemove(keyCodeAction.KeyCode, out re))
+                        re.DisableAction();
                 }
             }
         }
@@ -117,19 +117,19 @@ public class KeyInput : MonoBehaviour
 
     private bool TryGetHistory(string keyCode, ref KeyCodeActionDto keyCodeAction)
     {
-        if(!keyCodeHistory.ContainsKey(keyCode) || keyCodeHistory[keyCode].Count <= 1)
+        if(!KeyCodeHistory.ContainsKey(keyCode) || KeyCodeHistory[keyCode].Count <= 1)
         {
             return false;
         }
-        keyCodeAction = keyCodeHistory[keyCode][keyCodeHistory[keyCode].Count - 2];
-        keyCodeHistory[keyCode].Remove(keyCodeHistory[keyCode][keyCodeHistory[keyCode].Count - 1]);
+        keyCodeAction = KeyCodeHistory[keyCode][KeyCodeHistory[keyCode].Count - 2];
+        KeyCodeHistory[keyCode].Remove(KeyCodeHistory[keyCode][KeyCodeHistory[keyCode].Count - 1]);
         return true;
     }
 
     private int GetCurrentMaxPriority()
     {
         int max = 0;
-        foreach(KeyCodeActionDto keyCodeAction in currentKeyCodeAction.Values)
+        foreach(KeyCodeActionDto keyCodeAction in CurrentKeyCodeAction.Values)
         {
             if(keyCodeAction == null)
             {

@@ -5,11 +5,13 @@ using UnityEngine;
 
 public class KeyCodeHolder : MonoBehaviour
 {
-    public string FunctionName {
+    public string FunctionName
+    {
         get;
         protected set;
     }
-    public Dictionary<string, KeyCodeActionDto> KeyCodeActions {
+    public Dictionary<string, KeyCodeActionDto> KeyCodeActions
+    {
         get;
         private set;
     } = new Dictionary<string, KeyCodeActionDto>();
