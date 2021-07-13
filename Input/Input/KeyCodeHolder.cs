@@ -36,4 +36,9 @@ public class KeyCodeHolder : MonoBehaviour
             KeyCodeActions.Add(keyCode, keyCodeAction);
         }
     }
+
+    public void AddKeyCodeAction(string keyCode, string keyCodeName, Action<string> keyAction)
+    {
+        AddKeyCodeAction(keyCode, keyCodeName, keyAction, (_keyCode) => { });
+    }
 }
