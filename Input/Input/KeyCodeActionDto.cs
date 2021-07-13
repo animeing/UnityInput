@@ -17,14 +17,14 @@ public class KeyCodeActionDto
         get;
         set;
     }
-    public Action Action
+    public Action<string> Action
     {
         get;
         set;
     }
-    public Action DisableAction
+    public Action<string> DisableAction
     {
         get;
         set;
-    } = ()=>{};
+    } = (keyCode)=>{};
 }

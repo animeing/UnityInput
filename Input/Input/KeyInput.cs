@@ -29,7 +29,7 @@ public class KeyInput : MonoBehaviour
             {
                 continue;
             }
-            keyCodeAction.Action();
+            keyCodeAction.Action(keyCodeAction.KeyCode);
         }
     }
     public bool AddKeyCodeActions(KeyCodeHolder keyCodeHolder)
@@ -69,7 +69,7 @@ public class KeyInput : MonoBehaviour
             }
             if(CurrentKeyCodeAction[keyCodeAction.KeyCode].Priority < keyCodeAction.Priority)
             {
-                CurrentKeyCodeAction[keyCodeAction.KeyCode].DisableAction();
+                CurrentKeyCodeAction[keyCodeAction.KeyCode].DisableAction(keyCodeAction.KeyCode);
                 CurrentKeyCodeAction[keyCodeAction.KeyCode] = keyCodeAction;
                 AddKeyCodeHistory(keyCodeAction);
             }
@@ -94,7 +94,7 @@ public class KeyInput : MonoBehaviour
                 KeyCodeActionDto codeAction = new KeyCodeActionDto();
                 if(TryGetHistory(keyCodeAction.KeyCode, ref codeAction))
                 {
-                    keyCodeAction.DisableAction();
+                    keyCodeAction.DisableAction(codeAction.KeyCode);
                     if (CurrentKeyCodeAction.ContainsKey(keyCodeAction.KeyCode))
                     {
                         CurrentKeyCodeAction[keyCodeAction.KeyCode] = codeAction;
@@ -109,7 +109,7 @@ public class KeyInput : MonoBehaviour
                 {
                     KeyCodeActionDto re;
                     if(CurrentKeyCodeAction.TryRemove(keyCodeAction.KeyCode, out re))
-                        re.DisableAction();
+                        re.DisableAction(re.KeyCode);
                 }
             }
         }

@@ -19,7 +19,7 @@ public class KeyCodeHolder : MonoBehaviour
     [HideInInspector]
     public int priority;
 
-    public void AddKeyCodeAction(string keyCode, string keyCodeName, Action keyAction, Action disableAction)
+    public void AddKeyCodeAction(string keyCode, string keyCodeName, Action<string> keyAction, Action<string> disableAction)
     {
         KeyCodeActionDto keyCodeAction = new KeyCodeActionDto();
         keyCodeAction.KeyCodeName = keyCodeName;
