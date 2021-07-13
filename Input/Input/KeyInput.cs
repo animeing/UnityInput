@@ -98,7 +98,6 @@ public class KeyInput : MonoBehaviour
                     if (CurrentKeyCodeAction.ContainsKey(keyCodeAction.KeyCode))
                     {
                         CurrentKeyCodeAction[keyCodeAction.KeyCode] = codeAction;
-                        Debug.Log(keyCodeAction.KeyCodeName);
                     }
                     else
                     {
